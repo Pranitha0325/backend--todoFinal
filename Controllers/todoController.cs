@@ -29,5 +29,21 @@ namespace backend.Controllers
             await _todoDbContext.SaveChangesAsync();
             return Ok(Todo);
         }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTodoByDescription(string description)
+        {
+            var todoToDelete = await _todoDbContext.Todos.FirstOrDefaultAsync(t => t.Title == description);
+
+            if (todoToDelete == null)
+            {
+                return NotFound();
+            }
+            _todoDbContext.Todos.Remove(todoToDelete);
+            await _todoDbContext.SaveChangesAsync();
+
+            return Ok(todoToDelete);
+        }
+
+
     }
 }
