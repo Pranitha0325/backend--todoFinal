@@ -29,20 +29,40 @@ namespace backend.Controllers
             await _todoDbContext.SaveChangesAsync();
             return Ok(Todo);
         }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTodoByDescription(string description)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTodoById(Guid id)
         {
-            var todoToDelete = await _todoDbContext.Todos.FirstOrDefaultAsync(t => t.Title == description);
+            var todoToDelete = await _todoDbContext.Todos.FindAsync(id);
 
             if (todoToDelete == null)
             {
                 return NotFound();
             }
+
             _todoDbContext.Todos.Remove(todoToDelete);
             await _todoDbContext.SaveChangesAsync();
 
             return Ok(todoToDelete);
         }
+
+        // Inside your todoController
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ToggleTodoIsCompleted(Guid id)
+        {
+            var todoToUpdate = await _todoDbContext.Todos.FindAsync(id);
+
+            if (todoToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            todoToUpdate.IsCompleted = !todoToUpdate.IsCompleted; // Toggle the isCompleted property
+            await _todoDbContext.SaveChangesAsync();
+
+            return Ok(todoToUpdate);
+        }
+
+
 
 
     }
